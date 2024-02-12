@@ -158,7 +158,7 @@ class Job():
             self.handle_finalize()
             extractor.finalize()
 
-        return self.status
+        return self.status, self.pathfmt.path
 
     def dispatch(self, msg):
         """Call the appropriate message handler"""
@@ -338,7 +338,7 @@ class DownloadJob(Job):
         if "after" in hooks:
             for callback in hooks["after"]:
                 callback(pathfmt)
-                
+
 
     def handle_directory(self, kwdict):
         """Set and create the target directory for downloads"""
@@ -849,7 +849,7 @@ class DataJob(Job):
         except Exception:
             pass
 
-        return 0, self.pathfmt.path
+        return 0
 
     def handle_url(self, url, kwdict):
         self.data.append((Message.Url, url, self.filter(kwdict)))
