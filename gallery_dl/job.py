@@ -338,7 +338,10 @@ class DownloadJob(Job):
         if "after" in hooks:
             for callback in hooks["after"]:
                 callback(pathfmt)
-        return pathfmt.path
+
+    def get_downloaded_file_path(self):
+        """Return the path of the downloaded file"""
+        return self.pathfmt.path
 
     def handle_directory(self, kwdict):
         """Set and create the target directory for downloads"""
