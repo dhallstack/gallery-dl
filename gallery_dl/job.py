@@ -159,7 +159,7 @@ class Job():
             extractor.finalize()
 
 
-        return self.status, self.downloaded_files
+        return self.status, DownloadJob.downloaded_files
 
     def dispatch(self, msg):
         """Call the appropriate message handler"""
@@ -254,6 +254,7 @@ class Job():
 
 class DownloadJob(Job):
     """Download images into appropriate directory/filename locations"""
+    downloaded_files = []
 
     def __init__(self, url, parent=None):
         Job.__init__(self, url, parent)
@@ -263,7 +264,6 @@ class DownloadJob(Job):
         self.sleep = None
         self.hooks = ()
         self.downloaders = {}
-        self.downloaded_files = []
         self.out = output.select()
         self.visited = parent.visited if parent else set()
         self._extractor_filter = None
@@ -333,7 +333,7 @@ class DownloadJob(Job):
 
         # download succeeded
         pathfmt.finalize()
-        self.downloaded_files.append(self.pathfmt.path)
+        DownloadJob.downloaded_files.append(self.pathfmt.path)
         self.out.success(pathfmt.path)
         self._skipcnt = 0
         if archive:
