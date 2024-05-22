@@ -158,6 +158,7 @@ class Job():
             self.handle_finalize()
             extractor.finalize()
 
+
         return self.status, self.downloaded_files
 
     def dispatch(self, msg):
@@ -398,10 +399,10 @@ class DownloadJob(Job):
                 try:
                     if pextr.config("parent-skip"):
                         job._skipcnt = self._skipcnt
-                        status = job.run()
+                        status, files = job.run()
                         self._skipcnt = job._skipcnt
                     else:
-                        status = job.run()
+                        status, files = job.run()
 
                     if status:
                         self.status |= status
