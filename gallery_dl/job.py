@@ -20,6 +20,10 @@ from .output import stdout_write
 class Job():
     """Base class for Job types"""
     ulog = None
+    all_files = []
+
+    def clear_files():
+        Job.all_files.clear()
 
     def __init__(self, extr, parent=None):
         if isinstance(extr, str):
@@ -158,8 +162,8 @@ class Job():
             self.handle_finalize()
             extractor.finalize()
 
-
-        return self.status, self.downloaded_files
+        Job.all_files.extend(self.downloaded_files)
+        return self.status, Job.all_files
 
     def dispatch(self, msg):
         """Call the appropriate message handler"""
