@@ -35,6 +35,7 @@ class Job():
         self.pathfmt = None
         self.kwdict = {}
         self.status = 0
+        self.error = None
 
         cfgpath = []
         if parent:
@@ -133,16 +134,19 @@ class Job():
         except exception.StopExtraction as exc:
             if exc.message:
                 log.error(exc.message)
+                self.error = exc.message
             self.status |= exc.code
         except (exception.TerminateExtraction, exception.RestartExtraction):
             raise
         except exception.GalleryDLException as exc:
             log.error("%s: %s", exc.__class__.__name__, exc)
+            self.error = str(exc)
             self.status |= exc.code
         except OSError as exc:
             log.error("Unable to download data:  %s: %s",
                       exc.__class__.__name__, exc)
             log.debug("", exc_info=True)
+            self.error = str(exc)
             self.status |= 128
         except Exception as exc:
             log.error(("An unexpected error occurred: %s - %s. "
@@ -151,6 +155,7 @@ class Job():
                        "https://github.com/mikf/gallery-dl/issues ."),
                       exc.__class__.__name__, exc)
             log.debug("", exc_info=True)
+            self.error = str(exc)
             self.status |= 1
         except BaseException:
             self.status |= 1
@@ -163,7 +168,7 @@ class Job():
             extractor.finalize()
 
         Job.all_files.extend(self.downloaded_files)
-        return self.status, Job.all_files
+        return self.status, Job.all_files, self.error
 
     def dispatch(self, msg):
         """Call the appropriate message handler"""
