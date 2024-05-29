@@ -408,10 +408,10 @@ class DownloadJob(Job):
                 try:
                     if pextr.config("parent-skip"):
                         job._skipcnt = self._skipcnt
-                        status, files = job.run()
+                        status, files, error = job.run()
                         self._skipcnt = job._skipcnt
                     else:
-                        status, files = job.run()
+                        status, files, error = job.run()
 
                     if status:
                         self.status |= status
